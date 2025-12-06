@@ -12,6 +12,14 @@ A modern Python backend service built with FastAPI, SQLAlchemy, and Pydantic.
 - **Black & isort**: Code formatting and import sorting
 - **Pylint & mypy**: Linting and type checking
 - **Uvicorn**: ASGI server for production deployments
+- **Code Analysis API**: Comprehensive code quality, complexity, and debugging analysis
+  - Code quality scoring with detailed metrics
+  - Issue detection (complexity, style, naming)
+  - Complexity metrics (cyclomatic, cognitive)
+  - Architecture insights (design patterns)
+  - Formatting recommendations
+  - Debugging insights
+  - Multi-language support (Python, JavaScript, TypeScript, Java, C++)
 
 ## Setup
 
@@ -57,6 +65,15 @@ Interactive API documentation is available at:
 - **ReDoc**: `http://localhost:8000/redoc`
 - **OpenAPI JSON**: `http://localhost:8000/openapi.json`
 
+#### Code Analysis API
+
+The backend includes a comprehensive Code Analysis API for analyzing source code across multiple languages:
+
+- **Documentation**: See [ANALYSIS_API.md](./ANALYSIS_API.md) for detailed documentation
+- **Endpoints**: `/api/analysis/*` - Quality scoring, issue detection, complexity metrics, architecture insights, formatting recommendations, and debugging analysis
+- **Supported Languages**: Python, JavaScript, TypeScript, Java, C/C++
+- **Features**: Heuristic-based analysis with design pattern detection, code metrics, and actionable insights
+
 ### File Structure
 
 ```
@@ -68,28 +85,29 @@ backend/
 │   ├── database.py          # Database setup
 │   ├── models/              # SQLAlchemy models
 │   │   ├── __init__.py
-│   │   └── base.py
+│   │   ├── base.py
+│   │   └── analysis.py      # Analysis models
 │   ├── schemas/             # Pydantic schemas/DTOs
 │   │   ├── __init__.py
-│   │   └── base.py
+│   │   ├── base.py
+│   │   └── analysis.py      # Analysis schemas
 │   ├── api/                 # API routes
 │   │   ├── __init__.py
-│   │   ├── deps.py          # Dependency injection
-│   │   └── routes/
-│   │       ├── __init__.py
-│   │       └── items.py
+│   │   └── analysis.py      # Code analysis endpoints
 │   ├── services/            # Business logic
 │   │   ├── __init__.py
-│   │   └── base.py
+│   │   └── code_analyzer.py # Analysis service
 │   ├── middleware/          # Custom middleware
 │   │   └── __init__.py
 │   └── utils/               # Utility functions
 │       ├── __init__.py
-│       └── logging.py
+│       └── language_adapter.py  # Language parsers
 ├── tests/
 │   ├── __init__.py
 │   ├── conftest.py          # Pytest fixtures
 │   ├── test_main.py
+│   ├── test_analysis_api.py        # Analysis API tests
+│   ├── test_analysis_service.py    # Analysis service tests
 │   ├── api/                 # API endpoint tests
 │   │   ├── __init__.py
 │   │   └── test_items.py
@@ -99,6 +117,7 @@ backend/
 ├── migrations/              # Alembic database migrations (optional)
 ├── pyproject.toml           # Poetry configuration
 ├── poetry.lock              # Locked dependencies
+├── ANALYSIS_API.md          # Analysis API documentation
 └── Dockerfile               # Container configuration
 ```
 
