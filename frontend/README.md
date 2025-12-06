@@ -11,6 +11,9 @@ A modern web frontend built with Next.js, TypeScript, and Tailwind CSS.
 - **Prettier**: Code formatting
 - **Jest**: Unit testing framework
 - **Environment Configuration**: Easy API endpoint configuration
+- **Agent Console UI**: Authentication gate, repository explorer, prompt composer, analysis dashboards
+- **State Management**: React Query for server state + Zustand stores for auth, explorer, UI, and analysis state
+- **Streaming Feedback**: Progress indicators and live status updates while running analysis
 
 ## Setup
 
@@ -398,13 +401,20 @@ export function reportWebVitals(metric) {
 
 ## Environment Configuration
 
+Environment variables live in `.env.local`. Copy `.env.example` as a starting point:
+
+```bash
+cp .env.example .env.local
+```
+
 Key environment variables:
 
-- `NEXT_PUBLIC_API_URL` - Backend API URL (required)
-- `NEXT_PUBLIC_APP_NAME` - Application name
-- `NEXT_PUBLIC_DEBUG` - Enable debug mode
+- `NEXT_PUBLIC_API_URL` (required) – Backend API base URL, e.g. `http://localhost:8000`
+- `NEXT_PUBLIC_APP_NAME` – Display name for headers, titles, etc. (default: Agent Console)
+- `NEXT_PUBLIC_APP_VERSION` – Version string shown in dashboards (default: 1.0.0)
+- `NEXT_PUBLIC_ANALYTICS_ID` – Optional analytics identifier (PostHog, GA4, etc.)
 
-See `.env.example` for complete configuration.
+Configure these variables in Vercel/Netlify project settings for production deployments.
 
 ## Common Tasks
 
