@@ -76,3 +76,7 @@ Thumbs.db
 # Temporary files
 *.tmp
 .tmp/
+
+# GitHub mirror repositories
+/tmp/github_mirrors/
+github_mirrors/

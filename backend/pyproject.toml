@@ -18,6 +18,9 @@ psycopg2-binary = "^2.9.0"
 python-dotenv = "^1.0.0"
 python-multipart = "^0.0.6"
 cors-middleware = "^0.0.2"
+httpx = "^0.25.0"
+cryptography = "^41.0.0"
+pyjwt = "^2.8.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.0"

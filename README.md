@@ -233,9 +233,25 @@ For issues or questions:
 2. Create a new issue with detailed reproduction steps
 3. Join our community discussions
 
+## GitHub Integration
+
+This project includes comprehensive GitHub OAuth integration and repository synchronization features:
+
+- **OAuth Authentication**: Connect GitHub accounts securely with OAuth 2.0
+- **Repository Management**: Discover, select, and manage repositories for analysis
+- **Repository Mirroring**: Create local mirrors of repositories for offline analysis
+- **Code Inspection**: Browse files and inspect code across repositories
+- **Real-time Updates**: Webhook support for push events and pull requests
+
+For detailed setup and usage instructions, see:
+- [GitHub Setup Guide](./GITHUB_SETUP.md) - OAuth app configuration and environment variables
+- [GitHub Integration Documentation](./GITHUB_INTEGRATION.md) - Architecture, API endpoints, and usage examples
+
 ## Related Documentation
 
 - [Backend README](./backend/README.md)
 - [Frontend README](./frontend/README.md)
 - [Docker Setup](./shared/docker-compose.yml)
 - [Environment Configuration](./shared/.env.example)
+- [GitHub OAuth Setup](./GITHUB_SETUP.md)
+- [GitHub Integration Architecture](./GITHUB_INTEGRATION.md)
