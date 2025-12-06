@@ -1,11 +1,17 @@
 """Application configuration management"""
+
 from typing import Optional
 
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     """Application settings from environment variables"""
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        case_sensitive=False,
+    )
 
     debug: bool = False
     app_name: str = "FastAPI Backend"
@@ -26,10 +32,6 @@ class Settings(BaseSettings):
 
     # Logging
     log_level: str = "INFO"
-
-    class Config:
-        env_file = ".env"
-        case_sensitive = False
 
 
 settings = Settings()
