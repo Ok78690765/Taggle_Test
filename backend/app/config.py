@@ -33,5 +33,12 @@ class Settings(BaseSettings):
     # Logging
     log_level: str = "INFO"
 
+    # LLM Providers
+    openai_api_key: Optional[str] = None
+    anthropic_api_key: Optional[str] = None
+
+    # Repo settings
+    repo_root: str = "/home/engine/project"
+
 
 settings = Settings()
