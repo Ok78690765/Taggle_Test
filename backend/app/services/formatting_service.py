@@ -50,8 +50,12 @@ class FormattingService:
             )
             results.append(result)
 
-            if result.status == "success" and result.changes_made:
-                formatted_content = result.message or formatted_content
+            if (
+                result.status == "success"
+                and result.changes_made
+                and result.formatted_content is not None
+            ):
+                formatted_content = result.formatted_content
 
         return results
 

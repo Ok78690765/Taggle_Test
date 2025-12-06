@@ -1,12 +1,12 @@
 """REST API endpoints for prompt-based code editing"""
 
 import os
-from datetime import datetime
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from app.config import settings
 from app.database import get_db
 from app.models.prompt_edit import CodeEdit, EditSession, EditValidation
 from app.schemas.prompt_edit import (
@@ -171,7 +171,8 @@ async def apply_edits(
     failed_files = []
     errors = []
 
-    repo_root = os.getenv("REPO_ROOT", "/home/engine/project")
+    repo_root = settings.repo_root
+    validator = ValidationService() if not request.skip_validation else None
 
     for edit in edits:
         try:
@@ -183,9 +184,10 @@ async def apply_edits(
                     edit.applied = True
                     applied_files.append(edit.file_path)
             elif edit.edit_type in ["create", "modify"]:
-                if not request.skip_validation:
-                    validator = ValidationService()
-                    result = validator.validate_syntax(edit.file_path, edit.modified_content or "")
+                if validator is not None:
+                    result = validator.validate_syntax(
+                        edit.file_path, edit.modified_content or ""
+                    )
                     if result.status == "fail":
                         errors.append(
                             {

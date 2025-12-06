@@ -10,6 +10,10 @@ from app.api.prompt_edit import router as prompt_edit_router
 from app.config import settings
 from app.database import Base, engine
 
+# Import models to ensure they are registered with SQLAlchemy
+import app.models.analysis  # noqa: F401
+import app.models.prompt_edit  # noqa: F401
+
 # Create tables
 Base.metadata.create_all(bind=engine)
 

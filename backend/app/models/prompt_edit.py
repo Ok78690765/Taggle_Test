@@ -1,6 +1,6 @@
 """Domain models for prompt-based code editing"""
 
-from sqlalchemy import Boolean, Column, DateTime, Integer, JSON, String, Text
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, JSON, String, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -40,7 +40,12 @@ class CodeEdit(Base):
     __tablename__ = "code_edits"
 
     id = Column(Integer, primary_key=True, index=True)
-    session_id = Column(String(255), index=True, nullable=False)
+    session_id = Column(
+        String(255),
+        ForeignKey("edit_sessions.session_id", ondelete="CASCADE"),
+        index=True,
+        nullable=False,
+    )
     file_path = Column(String(500), nullable=False)
     original_content = Column(Text, nullable=True)
     modified_content = Column(Text, nullable=True)
@@ -54,7 +59,7 @@ class CodeEdit(Base):
         DateTime, server_default=func.now(), onupdate=func.now(), nullable=False
     )
 
-    session = relationship("EditSession", back_populates="edits", viewonly=True)
+    session = relationship("EditSession", back_populates="edits")
 
 
 class EditValidation(Base):
@@ -63,11 +68,16 @@ class EditValidation(Base):
     __tablename__ = "edit_validations"
 
     id = Column(Integer, primary_key=True, index=True)
-    session_id = Column(String(255), index=True, nullable=False)
+    session_id = Column(
+        String(255),
+        ForeignKey("edit_sessions.session_id", ondelete="CASCADE"),
+        index=True,
+        nullable=False,
+    )
     validation_type = Column(String(50), nullable=False)
     status = Column(String(50), nullable=False)
     message = Column(Text, nullable=True)
     details = Column(JSON, nullable=True)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
 
-    session = relationship("EditSession", back_populates="validations", viewonly=True)
+    session = relationship("EditSession", back_populates="validations")

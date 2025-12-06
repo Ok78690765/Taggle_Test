@@ -40,6 +40,10 @@ venv/
 ENV/
 env/
 
+# Test databases
+test_*.db
+*.test.db
+
 # Poetry
 poetry.lock
 

@@ -3,9 +3,8 @@
 import json
 import os
 import re
-from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 from uuid import uuid4
 
 from sqlalchemy.orm import Session
@@ -122,7 +121,7 @@ For deletions, set modified_content to null.
         llm_provider_name: str,
         llm_model: Optional[str],
         dry_run: bool,
-    ) -> tuple[str, List[EditPlan]]:
+    ) -> Tuple[str, List[EditPlan]]:
         """
         Create edit plan from user prompt
 
@@ -140,13 +139,18 @@ For deletions, set modified_content to null.
         # Create session
         session_id = str(uuid4())
 
-        # Get LLM provider
-        llm_provider = LLMProviderFactory.create(
-            llm_provider_name, model=llm_model or self._get_default_model(llm_provider_name)
-        )
+        # Determine provider and model
+        resolved_provider = llm_provider_name
+        resolved_model = llm_model or self._get_default_model(resolved_provider)
+
+        llm_provider = LLMProviderFactory.create(resolved_provider, model=resolved_model)
+        use_mock_plan = resolved_provider == "mock"
 
         if not llm_provider.is_available():
-            llm_provider = LLMProviderFactory.create("mock")
+            resolved_provider = "mock"
+            resolved_model = self._get_default_model("mock")
+            llm_provider = LLMProviderFactory.create(resolved_provider, model=resolved_model)
+            use_mock_plan = True
 
         # Build prompts
         system_prompt = self._build_system_prompt()
@@ -155,8 +159,11 @@ For deletions, set modified_content to null.
         )
 
         # Generate edit plan
+        provider_error: Optional[str] = None
         try:
-            if llm_provider_name != "mock":
+            if use_mock_plan:
+                parsed = self._generate_mock_plan(prompt, target_files)
+            else:
                 response = llm_provider.generate_completion(
                     user_prompt,
                     system_prompt=system_prompt,
@@ -164,14 +171,13 @@ For deletions, set modified_content to null.
                     max_tokens=4000,
                 )
                 parsed = self._parse_llm_response(response)
-            else:
-                parsed = self._generate_mock_plan(prompt, target_files)
-        except Exception as e:
-            parsed = {
-                "edits": [],
-                "summary": f"Error generating plan: {str(e)}",
-                "error": str(e),
-            }
+        except Exception as exc:
+            provider_error = str(exc)
+            parsed = self._generate_mock_plan(prompt, target_files)
+            parsed["error"] = provider_error
+            use_mock_plan = True
+            resolved_provider = "mock"
+            resolved_model = self._get_default_model("mock")
 
         # Create session record
         edit_session = EditSession(
@@ -179,8 +185,8 @@ For deletions, set modified_content to null.
             user_prompt=prompt,
             repo_context=repo_context.model_dump() if repo_context else None,
             status="plan_generated",
-            llm_provider=llm_provider_name,
-            llm_model=llm_model,
+            llm_provider=resolved_provider,
+            llm_model=resolved_model,
             dry_run=dry_run,
         )
         self.db.add(edit_session)

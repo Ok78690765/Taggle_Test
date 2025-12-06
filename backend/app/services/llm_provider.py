@@ -189,6 +189,9 @@ class AnthropicProvider(LLMProvider):
 class MockLLMProvider(LLMProvider):
     """Mock LLM provider for testing and development"""
 
+    def __init__(self, model: Optional[str] = None, **_ignored: Any):
+        self.model = model or "mock-model"
+
     def generate_completion(
         self,
         prompt: str,

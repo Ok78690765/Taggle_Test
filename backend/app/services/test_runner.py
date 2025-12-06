@@ -4,7 +4,7 @@ import os
 import shlex
 import subprocess
 import time
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from app.schemas.prompt_edit import TestRunResponse
 
@@ -113,7 +113,7 @@ class TestRunnerService:
 
         return base_command
 
-    def _parse_test_output(self, output: str) -> tuple[int, int, int]:
+    def _parse_test_output(self, output: str) -> Tuple[int, int, int]:
         """Parse pytest output to extract pass/fail counts"""
         passed = failed = skipped = 0
 

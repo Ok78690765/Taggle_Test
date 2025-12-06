@@ -120,6 +120,9 @@ Submit a prompt to generate code edit plans.
 
 Get unified diffs for all planned edits.
 
+**Path Parameter:**
+- `session_id`: Session identifier
+
 **Response:**
 ```json
 {
@@ -145,10 +148,12 @@ Get unified diffs for all planned edits.
 
 Run validation checks on planned edits.
 
+**Path Parameter:**
+- `session_id`: Session identifier
+
 **Request Body:**
 ```json
 {
-  "session_id": "uuid-here",
   "validation_types": ["syntax", "lint", "type"]
 }
 ```
@@ -186,10 +191,12 @@ Run validation checks on planned edits.
 
 Format files using appropriate formatters.
 
+**Path Parameter:**
+- `session_id`: Session identifier
+
 **Request Body:**
 ```json
 {
-  "session_id": "uuid-here",
   "file_paths": ["backend/app/auth.py"],
   "formatters": ["black", "ruff"]
 }
@@ -220,10 +227,12 @@ Format files using appropriate formatters.
 
 Apply the planned edits to the filesystem.
 
+**Path Parameter:**
+- `session_id`: Session identifier
+
 **Request Body:**
 ```json
 {
-  "session_id": "uuid-here",
   "file_paths": null,
   "skip_validation": false,
   "auto_format": true
@@ -248,10 +257,12 @@ Apply the planned edits to the filesystem.
 
 Execute tests after applying edits.
 
+**Path Parameter:**
+- `session_id`: Session identifier
+
 **Request Body:**
 ```json
 {
-  "session_id": "uuid-here",
   "test_command": "pytest tests/",
   "test_paths": ["tests/test_auth.py"],
   "coverage": true
@@ -277,6 +288,9 @@ Execute tests after applying edits.
 **GET** `/api/prompt/{session_id}/status`
 
 Get the current status of an edit session.
+
+**Path Parameter:**
+- `session_id`: Session identifier
 
 **Response:**
 ```json

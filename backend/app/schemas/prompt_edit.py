@@ -1,6 +1,6 @@
 """Pydantic schemas for prompt-based code editing"""
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from pydantic import BaseModel, Field
 
@@ -51,7 +51,7 @@ class EditPlan(BaseModel):
     description: str = Field(..., description="Description of the edit")
     original_content: Optional[str] = Field(None, description="Original file content")
     modified_content: Optional[str] = Field(None, description="Modified file content")
-    line_range: Optional[tuple[int, int]] = Field(
+    line_range: Optional[Tuple[int, int]] = Field(
         None, description="Line range affected by edit"
     )
 
@@ -91,7 +91,6 @@ class DiffPreviewResponse(BaseModel):
 class ApplyEditRequest(BaseModel):
     """Request schema for applying edits"""
 
-    session_id: str = Field(..., description="Session identifier")
     file_paths: Optional[List[str]] = Field(
         None, description="Specific files to apply (None = all)"
     )
@@ -119,7 +118,6 @@ class ApplyEditResponse(BaseModel):
 class FormatRequest(BaseModel):
     """Request schema for formatting code"""
 
-    session_id: str = Field(..., description="Session identifier")
     file_paths: Optional[List[str]] = Field(
         None, description="Specific files to format (None = all)"
     )
@@ -153,9 +151,8 @@ class FormatResponse(BaseModel):
 class ValidationRequest(BaseModel):
     """Request schema for validating edits"""
 
-    session_id: str = Field(..., description="Session identifier")
     validation_types: List[str] = Field(
-        default=["syntax", "lint", "type"],
+        default_factory=lambda: ["syntax", "lint", "type"],
         description="Types of validation to perform",
     )
 
@@ -184,7 +181,6 @@ class ValidationResponse(BaseModel):
 class TestRunRequest(BaseModel):
     """Request schema for running tests"""
 
-    session_id: str = Field(..., description="Session identifier")
     test_command: Optional[str] = Field(None, description="Custom test command")
     test_paths: Optional[List[str]] = Field(
         None, description="Specific test paths to run"
