@@ -122,7 +122,7 @@ class FileTreeNode(BaseModel):
     """File tree node for repository"""
 
     path: str
-    type: str  # "file" or "directory"
+    type: str
     size: Optional[int] = None
     children: Optional[List["FileTreeNode"]] = None
 
