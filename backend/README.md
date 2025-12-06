@@ -20,6 +20,14 @@ A modern Python backend service built with FastAPI, SQLAlchemy, and Pydantic.
   - Formatting recommendations
   - Debugging insights
   - Multi-language support (Python, JavaScript, TypeScript, Java, C++)
+- **Prompt Edit Engine**: AI-powered code editing with LLM integration
+  - Natural language prompts to code edits
+  - Multi-provider LLM support (OpenAI, Anthropic, Mock)
+  - Dry-run mode with diff previews
+  - Syntax validation, linting, and type checking
+  - Automatic formatting (Black, Ruff, Prettier)
+  - Test execution and coverage reporting
+  - Complete audit trail with session tracking
 
 ## Setup
 
@@ -74,6 +82,16 @@ The backend includes a comprehensive Code Analysis API for analyzing source code
 - **Supported Languages**: Python, JavaScript, TypeScript, Java, C/C++
 - **Features**: Heuristic-based analysis with design pattern detection, code metrics, and actionable insights
 
+#### Prompt Edit Engine
+
+The Prompt Edit Engine provides AI-assisted code editing workflows:
+
+- **Documentation**: See [PROMPT_ENGINE.md](./PROMPT_ENGINE.md) for schema details and examples
+- **Endpoints**: `/api/prompt/*` - Submit prompts, preview diffs, apply edits, run formatters, validate, and execute tests
+- **Providers**: OpenAI GPT-4, Anthropic Claude, Mock provider for testing
+- **Safeguards**: Dry-run mode, diff previews, syntax/lint/type validation, automatic formatting, test execution
+- **Workflow**: Prompt submission → diff preview → validation → formatting → apply → tests → status tracking
+
 ### File Structure
 
 ```
@@ -86,28 +104,38 @@ backend/
 │   ├── models/              # SQLAlchemy models
 │   │   ├── __init__.py
 │   │   ├── base.py
-│   │   └── analysis.py      # Analysis models
+│   │   ├── analysis.py      # Analysis models
+│   │   └── prompt_edit.py   # Prompt edit models
 │   ├── schemas/             # Pydantic schemas/DTOs
 │   │   ├── __init__.py
 │   │   ├── base.py
-│   │   └── analysis.py      # Analysis schemas
+│   │   ├── analysis.py      # Analysis schemas
+│   │   └── prompt_edit.py   # Prompt edit schemas
 │   ├── api/                 # API routes
 │   │   ├── __init__.py
-│   │   └── analysis.py      # Code analysis endpoints
+│   │   ├── analysis.py      # Code analysis endpoints
+│   │   └── prompt_edit.py   # Prompt edit endpoints
 │   ├── services/            # Business logic
 │   │   ├── __init__.py
-│   │   └── code_analyzer.py # Analysis service
+│   │   ├── code_analyzer.py # Analysis service
+│   │   ├── llm_provider.py  # LLM provider interface
+│   │   ├── edit_planner.py  # Edit planning service
+│   │   ├── formatting_service.py  # Code formatting
+│   │   ├── validation_service.py  # Code validation
+│   │   └── test_runner.py   # Test execution
 │   ├── middleware/          # Custom middleware
 │   │   └── __init__.py
 │   └── utils/               # Utility functions
 │       ├── __init__.py
-│       └── language_adapter.py  # Language parsers
+│       ├── language_adapter.py  # Language parsers
+│       └── diff_utils.py    # Diff generation
 ├── tests/
 │   ├── __init__.py
 │   ├── conftest.py          # Pytest fixtures
 │   ├── test_main.py
 │   ├── test_analysis_api.py        # Analysis API tests
 │   ├── test_analysis_service.py    # Analysis service tests
+│   ├── test_prompt_edit_api.py     # Prompt edit API tests
 │   ├── api/                 # API endpoint tests
 │   │   ├── __init__.py
 │   │   └── test_items.py
@@ -118,6 +146,7 @@ backend/
 ├── pyproject.toml           # Poetry configuration
 ├── poetry.lock              # Locked dependencies
 ├── ANALYSIS_API.md          # Analysis API documentation
+├── PROMPT_ENGINE.md         # Prompt Edit Engine documentation
 └── Dockerfile               # Container configuration
 ```
 

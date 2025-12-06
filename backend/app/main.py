@@ -6,8 +6,13 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.analysis import router as analysis_router
+from app.api.prompt_edit import router as prompt_edit_router
 from app.config import settings
 from app.database import Base, engine
+
+# Import models to ensure they are registered with SQLAlchemy
+import app.models.analysis  # noqa: F401
+import app.models.prompt_edit  # noqa: F401
 
 # Create tables
 Base.metadata.create_all(bind=engine)
@@ -39,6 +44,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(analysis_router)
+app.include_router(prompt_edit_router)
 
 
 @app.get("/health")
