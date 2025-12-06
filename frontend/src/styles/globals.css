@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  @apply box-border;
+}
+
+html,
+body {
+  @apply bg-white text-gray-900;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  @apply text-blue-600 hover:text-blue-800;
+}
+
+button {
+  @apply font-medium cursor-pointer;
+}
+
+/* Layout utilities */
+.container {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+/* Utility classes */
+.text-center {
+  @apply text-center;
+}
+
+.flex-center {
+  @apply flex items-center justify-center;
+}
