@@ -287,23 +287,137 @@ body {
 
 ### Vercel (Recommended for Next.js)
 
-1. **Connect Repository**
-   - Go to [vercel.com](https://vercel.com)
-   - Import your repository
-   - Vercel auto-detects Next.js
+#### Step-by-Step Vercel Deployment Guide
 
-2. **Configure Build Settings**
-   - Root Directory: `frontend`
-   - Build Command: `npm run build`
+**Prerequisites:**
+- GitHub account with repository access
+- Vercel account (sign up at [vercel.com](https://vercel.com) with GitHub)
+
+**Step 1: Sign Up with GitHub Integration**
+1. Go to [vercel.com/signup](https://vercel.com/signup)
+2. Click "Continue with GitHub"
+3. Authorize Vercel to access your GitHub repositories
+4. You'll be redirected to the Vercel dashboard
+
+**Step 2: Import Your Repository**
+1. On the Vercel dashboard, click "Add New..." → "Project"
+2. Search for and select your monorepo repository
+3. Click "Import"
+
+**Step 3: Configure Project Settings**
+1. **Project Name**: Enter a name for your project
+2. **Root Directory**: 
+   - Click "Edit" next to Root Directory
+   - Select `frontend` folder from the dropdown
+   - Click "Continue"
+3. **Build & Development Settings**:
+   - Build Command: `npm ci && npm run build`
    - Output Directory: `.next` (auto-detected)
+   - Install Command: `npm ci` (auto-detected)
+   - Development Command: `npm run dev` (auto-detected)
 
-3. **Environment Variables**
-   - Add `NEXT_PUBLIC_API_URL` in project settings
-   - Set to your backend API URL in production
+**Step 4: Add Environment Variables**
+1. In the "Environment Variables" section, add:
+   - **NEXT_PUBLIC_API_URL**: 
+     - Development: `http://localhost:8000`
+     - Production: Your PythonAnywhere backend URL (e.g., `https://yourusername.pythonanywhere.com`)
+   - **NEXT_PUBLIC_APP_NAME**: `Agent Console` (or your app name)
+   - **NEXT_PUBLIC_APP_VERSION**: `1.0.0` (or your version)
 
-4. **Deploy**
-   - Automatic deployment on push to main
-   - Preview deployments for pull requests
+   **Important**: All `NEXT_PUBLIC_*` variables are public and visible to the browser. Never put secrets here.
+
+2. Click "Deploy"
+
+**Step 5: Configure Production Environment**
+After initial deployment, update production environment variables:
+1. Go to your Vercel project → Settings → Environment Variables
+2. Update `NEXT_PUBLIC_API_URL` to your production backend URL
+3. Set the environment to "Production"
+4. Click "Save"
+
+**Step 6: Automatic Deployments**
+Your project is now set up for automatic deployments:
+- **Main branch**: Automatically deploys to production when you push to `main`
+- **Pull requests**: Preview deployments are created for each PR
+- **Other branches**: Optional preview deployments (can be enabled in settings)
+
+#### Vercel URL Format
+- **Production URL**: `https://your-project-name.vercel.app`
+- **Branch Preview**: `https://your-project-name-branch-name.vercel.app`
+- **Custom Domain**: Configure in Vercel Settings → Domains
+
+#### Testing Locally Before Deployment
+Before pushing to production, test the Vercel build locally:
+
+```bash
+# Install Vercel CLI globally (if not already installed)
+npm install -g vercel
+
+# Test the build (from the frontend directory)
+vercel build
+
+# This will:
+# - Run npm ci to install dependencies
+# - Run npm run build to create the Next.js build
+# - Simulate the Vercel production environment
+```
+
+If the build succeeds, you should see:
+```
+✓ Build completed successfully
+```
+
+#### API Routes & Backend Integration
+The frontend is configured to proxy API calls to your backend:
+- **Local**: Requests to `/api/*` are proxied to `http://localhost:8000/api/*`
+- **Production**: Requests to `/api/*` are proxied to your `NEXT_PUBLIC_API_URL`
+
+**Important**: You must configure CORS on your backend to accept requests from your Vercel domain:
+```
+CORS_ORIGINS=https://your-project-name.vercel.app
+```
+
+#### Monitoring & Logs
+1. Go to your Vercel project → Deployments
+2. Click on a deployment to view:
+   - Build logs
+   - Runtime logs
+   - Analytics
+   - Performance metrics
+
+#### Troubleshooting Vercel Deployments
+
+**Build fails with "Module not found"**:
+- Check that all imports use correct paths
+- Ensure dependencies are in `package.json`
+- Verify TypeScript compilation: `npm run type-check`
+
+**API calls fail in production**:
+- Verify `NEXT_PUBLIC_API_URL` is set to the correct backend URL
+- Check that the backend URL is accessible from the internet
+- Ensure backend CORS settings include your Vercel domain
+- Check browser console for CORS errors
+
+**Environment variables not working**:
+- Redeploy after setting environment variables (they're baked in at build time)
+- Verify variables are prefixed with `NEXT_PUBLIC_` to be available in the browser
+- Non-public variables won't be available to the frontend
+
+**Deployment keeps failing**:
+- Run `vercel build` locally to reproduce the error
+- Check build logs in Vercel dashboard
+- Ensure Node.js version compatibility (requires Node.js 18+)
+
+#### Production Checklist
+Before deploying to production:
+- [ ] All code merged to `main` branch
+- [ ] Environment variables configured in Vercel dashboard
+- [ ] `NEXT_PUBLIC_API_URL` points to production backend
+- [ ] Backend CORS configured to accept Vercel domain
+- [ ] Build passes locally with `vercel build`
+- [ ] No console errors in production build
+- [ ] API integration tested with production backend
+- [ ] Analytics and monitoring configured (if needed)
 
 ### Netlify
 

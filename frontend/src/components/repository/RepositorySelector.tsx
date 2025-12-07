@@ -3,7 +3,6 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card } from '@/components/common/Card';
-import { Button } from '@/components/common/Button';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { githubApi } from '@/lib/github-api';
 import { useExplorerStore } from '@/store/explorer-store';

@@ -79,3 +79,6 @@ export interface SupportedLanguagesResponse {
   supported_languages: string[];
   count: number;
 }
+
+export type AnalysisRequest = CodeAnalysisRequest;
+export type AnalysisResult = CodeAnalysisResponse;
