@@ -251,15 +251,181 @@ docker run -p 8000:8000 \
   myapp-backend
 ```
 
-### Cloud Deployment
+### Railway Deployment (Recommended)
+
+Railway is a modern platform that provides seamless deployment with built-in PostgreSQL support and automatic deployments from GitHub.
+
+#### Prerequisites
+
+- A [Railway account](https://railway.app/) (free tier available)
+- GitHub repository connected to Railway
+- PostgreSQL database (optional, can provision through Railway)
+
+#### Initial Setup
+
+1. **Connect Your GitHub Repository**
+   
+   - Log in to [Railway](https://railway.app/)
+   - Click "New Project" → "Deploy from GitHub repo"
+   - Authorize Railway to access your repository
+   - Select your repository from the list
+
+2. **Configure the Service**
+
+   Railway will automatically detect the `railway.toml` configuration file. The project includes:
+   - Automatic Poetry dependency installation
+   - Health check monitoring at `/health`
+   - Restart policy for reliability
+   - Auto-deployment triggers on `main` branch pushes
+
+3. **Provision a PostgreSQL Database**
+
+   - In your Railway project dashboard, click "New" → "Database" → "Add PostgreSQL"
+   - Railway will automatically:
+     - Create a PostgreSQL instance
+     - Generate a `DATABASE_URL` environment variable
+     - Link it to your service
+
+   **Note**: If you don't need PostgreSQL yet, you can skip this step. The backend defaults to SQLite for development.
+
+4. **Set Environment Variables**
+
+   Navigate to your service's "Variables" tab and add the following:
+
+   **Required Variables:**
+   ```
+   ENVIRONMENT=production
+   SECRET_KEY=<generate-a-secure-random-key>
+   CORS_ORIGINS=https://your-frontend.vercel.app
+   ```
+
+   **Optional Variables:**
+   ```
+   DEBUG=false
+   LOG_LEVEL=INFO
+   ENABLE_API_DOCS=true
+   ```
+
+   **How to generate a secure `SECRET_KEY`:**
+   ```bash
+   python -c "import secrets; print(secrets.token_urlsafe(32))"
+   ```
+
+   **Important**: If you provisioned PostgreSQL, Railway automatically sets `DATABASE_URL`. You don't need to set it manually.
+
+5. **Deploy**
+
+   - Railway will automatically build and deploy your service
+   - Monitor the deployment logs in the "Deployments" tab
+   - Once deployed, Railway will provide a public URL (e.g., `https://myapp-backend.up.railway.app`)
+
+6. **Capture Your Public API URL**
+
+   - Go to your service's "Settings" tab
+   - Under "Domains", you'll see your public Railway URL
+   - Copy this URL (e.g., `https://myapp-backend-production.up.railway.app`)
+   - **Important**: Add this URL to your frontend's environment variables as `NEXT_PUBLIC_API_URL`
+
+7. **Enable Automatic Deployments**
+
+   The `railway.toml` configuration already enables auto-deployments:
+   - Every push to the `main` branch triggers a new deployment
+   - Railway rebuilds and redeploys the service automatically
+   - You can monitor deployment status in the Railway dashboard
+
+#### Database Migrations
+
+If you're using PostgreSQL with Alembic migrations:
+
+```bash
+# Run migrations after deployment via Railway CLI
+railway run alembic upgrade head
+```
+
+Or set up a migration job in Railway's dashboard.
+
+#### Health Checks & Monitoring
+
+Railway automatically monitors your service using the `/health` endpoint defined in `railway.toml`:
+- **Health check path**: `/health`
+- **Timeout**: 100 seconds
+- **Restart policy**: ON_FAILURE (up to 10 retries)
+
+You can view health status and logs in the Railway dashboard.
+
+#### Connecting Frontend to Backend
+
+After deploying to Railway:
+
+1. Copy your Railway backend URL (e.g., `https://myapp-backend-production.up.railway.app`)
+2. In your Vercel frontend project, add this environment variable:
+   ```
+   NEXT_PUBLIC_API_URL=https://myapp-backend-production.up.railway.app
+   ```
+3. Update the backend's `CORS_ORIGINS` on Railway to include your Vercel URL:
+   ```
+   CORS_ORIGINS=https://your-app.vercel.app,https://your-app-preview.vercel.app
+   ```
+
+#### Troubleshooting Railway Deployments
+
+**Build Failures:**
+- Check the build logs in the "Deployments" tab
+- Ensure `pyproject.toml` and `poetry.lock` are committed
+- Verify Python version compatibility (3.11+ required)
+
+**Connection Errors:**
+- Verify `DATABASE_URL` is set correctly (check "Variables" tab)
+- Ensure `CORS_ORIGINS` includes your frontend URL
+- Check service logs for detailed error messages
+
+**Health Check Failures:**
+- Verify the `/health` endpoint is accessible
+- Check that the service is binding to `0.0.0.0` and the `PORT` env var
+- Review the service logs for startup errors
+
+**Environment Variables Not Working:**
+- Redeploy after adding new variables (Railway requires a redeploy)
+- Check variable names are uppercase and match `config.py`
+- Ensure no trailing spaces in variable values
+
+#### Railway CLI (Optional)
+
+For advanced usage, install the Railway CLI:
+
+```bash
+# Install
+npm i -g @railway/cli
+
+# Login
+railway login
+
+# Link to your project
+railway link
+
+# Run commands in Railway environment
+railway run python manage.py migrate
+
+# View logs
+railway logs
+
+# Open dashboard
+railway open
+```
+
+#### Cost Optimization
+
+- **Free Tier**: Railway provides $5 free credits per month
+- **Optimize**: Use the smallest PostgreSQL instance for development
+- **Monitor**: Check the "Usage" tab to track resource consumption
+- **Scale**: Upgrade to a paid plan when you exceed free tier limits
+
+### Other Cloud Platforms
 
 **Heroku**:
 ```bash
 git push heroku main
 ```
-
-**Railway**:
-Connect your repository and Railway will auto-detect and deploy.
 
 **AWS ECS/Fargate**:
 Push image to ECR and create task definition.
