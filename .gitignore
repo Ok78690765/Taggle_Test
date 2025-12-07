@@ -4,6 +4,10 @@
 .env.*.local
 .env.production.local
 
+# Frontend source - allow lib directory
+!frontend/src/lib/
+!frontend/src/lib/**
+
 # Python
 __pycache__/
 *.py[cod]
@@ -16,7 +20,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+/lib/
 lib64/
 parts/
 sdist/
