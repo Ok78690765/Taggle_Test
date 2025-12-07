@@ -11,9 +11,7 @@ interface AuthGateProps {
 
 export function AuthGate({ children }: AuthGateProps) {
   const authenticated = useAuthStore((state) => state.authenticated);
-  const user = useAuthStore((state) => state.user);
   const setAuth = useAuthStore((state) => state.setAuth);
-  const logout = useAuthStore((state) => state.logout);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "npm ci && npm run build",
   "devCommand": "npm run dev",
   "installCommand": "npm ci",
   "framework": "nextjs",
@@ -7,20 +7,26 @@
   "env": [
     {
       "key": "NEXT_PUBLIC_API_URL",
-      "description": "Backend API URL",
+      "description": "Backend API URL for production (e.g., https://api.pythonanywhere.com)",
       "value": ""
+    },
+    {
+      "key": "NEXT_PUBLIC_APP_NAME",
+      "description": "Application display name shown in UI and headers",
+      "value": "Agent Console"
+    },
+    {
+      "key": "NEXT_PUBLIC_APP_VERSION",
+      "description": "Application version number displayed in dashboards",
+      "value": "1.0.0"
     }
   ],
+  "buildFailureComment": true,
+  "commentOnPullRequest": true,
   "functions": {
     "api/**/*.ts": {
       "memory": 1024,
       "maxDuration": 30
     }
-  },
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "${NEXT_PUBLIC_API_URL}/api/:path*"
-    }
-  ]
+  }
 }
