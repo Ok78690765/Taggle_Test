@@ -81,15 +81,15 @@ These variables establish the communication path between frontend and backend:
 |----------|---------|------|---------|----------|------------------|
 | `APP_NAME` | Application display name | String | `FastAPI Backend` | No | Informational only |
 | `APP_VERSION` | Application version | String | `0.1.0` | No | Informational only |
-| `ENVIRONMENT` | Deployment environment | String (dev/staging/prod) | `development` | Yes | Set to `production` in Railway |
-| `DEBUG` | Enable debug mode & auto-reload | Boolean | `false` | No | Set to `false` in production |
-| `LOG_LEVEL` | Logging verbosity | String (DEBUG/INFO/WARNING/ERROR) | `INFO` | No | Use `WARNING` or `ERROR` in production |
+| `ENVIRONMENT` | Deployment environment | String (development/staging/production) | `development` | Yes | Set to `production` in Railway. Controls `DEBUG` and `LOG_LEVEL` defaults |
+| `DEBUG` | Enable debug mode & auto-reload | Boolean | Auto-set (true in dev, false in prod) | No | Automatically set based on `ENVIRONMENT` |
+| `LOG_LEVEL` | Logging verbosity | String (DEBUG/INFO/WARNING/ERROR) | Auto-set (DEBUG in dev, INFO in prod) | No | Automatically set based on `ENVIRONMENT` |
 | `BACKEND_HOST` | Server bind address | String | `0.0.0.0` | Yes | `0.0.0.0` for Docker, `127.0.0.1` for local |
-| `BACKEND_PORT` or `PORT` | Server listen port | Integer | `8000` | Yes | Railway uses `PORT`, others use `BACKEND_PORT` |
+| `PORT` | Server listen port | Integer | `8000` | Yes | **PREFERRED**: Railway injects this. Falls back to `BACKEND_PORT` |
+| `BACKEND_PORT` | Server listen port (fallback) | Integer | `8000` | No | Used if `PORT` is not set |
 | `DATABASE_URL` | Database connection string | String (URI) | `sqlite:///./test.db` | Yes | **Sensitive**: Use platform-provided values in production |
 | `SECRET_KEY` | Token/session signing key | String (32+ chars) | `your-secret-key-...` | Yes | **CRITICAL**: Generate strong random value in production |
-| `CORS_ORIGINS` | Allowed frontend origins (comma-separated) | String | `http://localhost:3000,http://localhost:5173` | Yes | Production: set to Vercel frontend URL |
-| `LOG_LEVEL` | Logging level | String | `INFO` | No | Set to `WARNING` in production |
+| `CORS_ORIGINS` | Allowed frontend origins | String (comma-separated) | `http://localhost:3000,http://localhost:5173` | Yes | **Format**: No spaces after commas. Production: set to Vercel frontend URL |
 | `API_KEY` | Internal API key (if used) | String | `your-api-key-...` | No | **Sensitive**: Change in production |
 | `ENABLE_API_DOCS` | Enable FastAPI docs endpoint | Boolean | `true` | No | Set to `false` in production |
 
@@ -279,31 +279,45 @@ docker-compose -f shared/docker-compose.yml up
 ### Railway Backend Setup
 
 1. **Create Railway app** for backend:
-   ```bash
-   # From backend directory
-   railway link  # or create new project
-   railway up
-   ```
+   - Log in to [Railway](https://railway.app/)
+   - Click "New Project" → "Deploy from GitHub repo"
+   - Authorize Railway and select your repository
+   - Railway will automatically detect the `railway.toml` configuration
 
-2. **Set environment variables in Railway dashboard**:
+2. **Provision PostgreSQL** (optional):
+   - In your Railway project dashboard, click "New" → "Database" → "Add PostgreSQL"
+   - Railway automatically sets the `DATABASE_URL` environment variable
+   - No manual configuration needed
+
+3. **Set environment variables in Railway dashboard**:
    - Navigate to your Railway project → Variables
    - Set each variable (copy from `backend/.env.example`):
    
    ```
    ENVIRONMENT=production
-   DEBUG=false
-   BACKEND_HOST=0.0.0.0
-   LOG_LEVEL=WARNING
    SECRET_KEY=<generate strong key: python -c "import secrets; print(secrets.token_urlsafe(32))">
    CORS_ORIGINS=https://your-vercel-url.vercel.app
+   ```
+   
+   **Optional Variables**:
+   ```
    ENABLE_API_DOCS=false  # Disable in production
    ```
    
-   **Note**: Railway provides `DATABASE_URL` and `PORT` automatically
+   **Note**: 
+   - Railway automatically provides `PORT` (no need to set manually)
+   - `DEBUG` and `LOG_LEVEL` are auto-set based on `ENVIRONMENT=production`
+   - If you provisioned PostgreSQL, `DATABASE_URL` is set automatically
    
-3. **Database**: Railway automatically provisions PostgreSQL, provides `DATABASE_URL`
+4. **Deploy**:
+   - Railway automatically builds and deploys using `railway.toml` configuration
+   - Monitor deployment logs in the "Deployments" tab
+   - Health checks run against the `/health` endpoint
 
-4. **Get your API URL**: Railway dashboard will show your service URL, e.g., `https://api.railway.app`
+5. **Get your API URL**: 
+   - Go to your service's "Settings" tab → "Domains"
+   - Railway provides a URL like `https://myapp-backend-production.up.railway.app`
+   - Copy this URL for use in your frontend's `NEXT_PUBLIC_API_URL`
 
 ### Vercel Frontend Setup
 
