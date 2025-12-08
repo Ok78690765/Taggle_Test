@@ -80,3 +80,4 @@ Thumbs.db
 # Temporary files
 *.tmp
 .tmp/
+# Backend requirements.txt files\nbackend/requirements.txt
