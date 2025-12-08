@@ -4,6 +4,13 @@
   "installCommand": "npm ci",
   "framework": "nextjs",
   "outputDirectory": ".next",
+  "env": [
+    {
+      "key": "NEXT_PUBLIC_API_URL",
+      "description": "Backend API URL",
+      "value": ""
+    }
+  ],
   "functions": {
     "api/**/*.ts": {
       "memory": 1024,
