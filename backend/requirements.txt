@@ -15,7 +15,7 @@ alembic==1.13.1
 python-dotenv==1.0.1
 python-multipart==0.0.6
 httpx==0.26.0
-aiofiles==23.2.1
+aiofiles==25.1.0
 
 # Code Analysis and Parsing
 tree-sitter==0.21.0
