@@ -66,4 +66,4 @@ aioredis==2.0.1
 celery==5.3.6
 
 # File uploads and processing
-orjson==3.9.14
+orjson==3.11.5
