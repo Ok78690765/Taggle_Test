@@ -37,7 +37,7 @@ passlib[bcrypt]==1.7.4
 starlette==0.36.3
 
 # Logging
-structlog==24.1.0
+structlog==25.5.0
 
 # Development and Testing Dependencies
 pytest==8.0.2
