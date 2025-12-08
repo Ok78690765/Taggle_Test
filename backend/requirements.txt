@@ -57,7 +57,7 @@ regex==2024.2.3
 python-dateutil==2.9.0.post0
 
 # API documentation
-markdown==3.5.2
+markdown==3.10
 
 # Async utilities
 aioredis==2.0.1
